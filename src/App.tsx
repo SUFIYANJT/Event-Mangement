@@ -9,20 +9,21 @@ import BookingDetails from './Pages/BookingDetails';
 // Import the global styles
 import TicketConfirmation from './Pages/TicketConfirmation';
 import Profile from './Pages/Profile';
+import Orgainzer from './Pages/Orgainzer';
 const App = () => {
   return (
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/" element={<HomePage />} />
-         
+          <Route path="/HomePage" element={<HomePage />} />
           <Route path="/event-details/:data" element={<DetailsEvent />} />
           <Route path='/BookingDetails' element={<BookingDetails />} />
           <Route path='/ticket-confirmation' element={<TicketConfirmation />} />
           <Route path='/Wishlist' element={<Wishlist />} />
           <Route path='/Profile' element={<Profile />} />
+          <Route path='/Orgainzer' element={<Orgainzer />} />
         </Routes>
       </div>
     </Router>

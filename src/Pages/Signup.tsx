@@ -11,7 +11,7 @@ const Signup = () => {
     <div className="signup-container">
       {/* Navigation Bar */}
       <div className="login-register-buttons">
-        <Link to="/login">
+        <Link to="/">
           <button className="login-button">LOGIN</button>
         </Link>
         <button className="register-button active">REGISTER</button>
@@ -46,7 +46,7 @@ const Signup = () => {
       </form>
 
       <p>
-        Already have an account? <Link to="/login" className="register-link">Login</Link>
+        Already have an account? <Link to="/" className="register-link">Login</Link>
       </p>
     </div>
   );

@@ -15,7 +15,7 @@ const Header: React.FC = () => {
 
         {/* Navigation Links */}
         <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button component={Link} to="/" color="inherit">
+          <Button component={Link} to="/Homepage" color="inherit">
             Home
           </Button>
           <Button component={Link} to="/Wishlist" color="inherit">
