@@ -6,27 +6,28 @@ import '../Static/DetailsEvent.css';
 import Header from '../Compunents/Header';
 
 const DetailsEvent = () => {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
   const { data } = useParams<{ data: string }>();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const desc = queryParams.get('desc');
-  const handleBookingClick=()=>{
+  
+  const handleBookingClick = () => {
     navigate('/BookingDetails');
-  }
+  };
+
   // Parsing event data from the URL parameter
-  const { title='not availa', date='not', image='not', location: eventLocation='not', slots=' ' } = data ? JSON.parse(decodeURIComponent(data)) : {};
+  const { title = 'not availa', date = 'not', image = 'not', location: eventLocation = 'not', slots = ' ' } = 
+    data ? JSON.parse(decodeURIComponent(data)) : {};
 
   // Fallback for missing data
   const finalSlots = slots || 'Not Available';
-
-  console.log('Decoded Data:', { title, date, image, eventLocation, slots }); // Debugging
 
   // State for wishlist
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   const handleWishlistClick = () => {
-    setIsWishlisted(!isWishlisted);
+    setIsWishlisted((prev) => !prev);
   };
 
   return (
@@ -47,8 +48,9 @@ const DetailsEvent = () => {
         <div
           className={`wishlist-icon ${isWishlisted ? 'wishlisted' : ''}`}
           onClick={handleWishlistClick}
+          title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
         >
-          ❤️
+          {isWishlisted ? '❤️ ' : '🤍 '}
         </div>
 
         {/* Event Content */}
@@ -67,17 +69,15 @@ const DetailsEvent = () => {
           </div>
         </div>
       </div>
-      <h1>{desc || 'Data not available'}</h1>
-      
-      <button
-        className="book-now-button"
-        onClick={handleBookingClick}
-      >
+      <p>{desc || 'Data not available'}</p>
+
+      <button className="book-now-button" onClick={handleBookingClick}>
         Book Now
       </button>
-      <div className='button-slots'>
-      <h3>Available slots: {finalSlots}</h3>
-    </div>
+      
+      <div className="button-slots">
+        <h3>Available slots: {finalSlots}</h3>
+      </div>
     </div>
   );
 };

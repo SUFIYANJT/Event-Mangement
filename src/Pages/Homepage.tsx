@@ -3,7 +3,8 @@ import '../Static/HomePage.css';
 import Header from '../Compunents/Header';
 import EventSearchAndFilters from '../Compunents/EventSearchAndFilters';
 import { Link } from 'react-router-dom';
-import  {Button } from '@mui/material';
+import { Button } from '@mui/material';
+
 const Homepage = () => {
   return (
     <div>
@@ -23,7 +24,7 @@ const Homepage = () => {
                 date: 'November 12, 2023',
                 action: 'Buy Tickets',
                 image: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?cs=srgb&dl=pexels-sebastian-ervi-866902-1763075.jpg&fm=jpg',
-                location: 'india',
+                location: 'India',
                 slots: 9
               },
               {
@@ -32,29 +33,32 @@ const Homepage = () => {
                 date: 'October 28, 2023',
                 action: 'Buy Tickets',
                 image: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?cs=srgb&dl=pexels-sebastian-ervi-866902-1763075.jpg&fm=jpg',
-                location: 'india',
+                location: 'India',
                 slots: 9
               }
             ].map((highlight, idx) => (
               <div key={idx} className="event-card">
-                <Link
-                  to={`/event-details/${encodeURIComponent(
-                    JSON.stringify({
-                      title: highlight.title,
-                      desc: highlight.desc,
-                      date: highlight.date,
-                      image: highlight.image,
-                      location: highlight.location,
-                      slots: highlight.slots
-                    })
-                  )}?desc=${encodeURIComponent(highlight.desc)}`}
-                >
-                  <img src={highlight.image} alt={highlight.title} />
+                <img src={highlight.image} alt={highlight.title} />
+                <div className="event-card-content">
                   <h3>{highlight.title}</h3>
                   <p>{highlight.desc}</p>
                   <p className="location">{highlight.date}</p>
-                  <Button variant="outlined" color="primary">{highlight.action}</Button>
-                </Link>
+                  <Link
+                    to={`/event-details/${encodeURIComponent(
+                      JSON.stringify({
+                        title: highlight.title,
+                        desc: highlight.desc,
+                        date: highlight.date,
+                        image: highlight.image,
+                        location: highlight.location,
+                        slots: highlight.slots
+                      })
+                    )}`}
+                    className="details-link"
+                  >
+                    <Button variant='outlined'>{highlight.action}</Button>
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
@@ -73,9 +77,11 @@ const Homepage = () => {
             ].map((event, idx) => (
               <div key={idx} className="event-card">
                 <img src={event.image} alt={event.title} />
-                <h3>{event.title}</h3>
-                <p>{event.desc}</p>
-                <p className="location">{event.location}</p>
+                <div className="event-card-content">
+                  <h3>{event.title}</h3>
+                  <p>{event.desc}</p>
+                  <p className="location">{event.location}</p>
+                </div>
               </div>
             ))}
           </div>

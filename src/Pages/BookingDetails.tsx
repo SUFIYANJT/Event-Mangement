@@ -6,7 +6,8 @@ const BookingDetails = () => {
   const [increment, setIncrement] = useState(1); // Default 1 person
   const [names, setNames] = useState<string[]>([]);
   const [ages, setAges] = useState<number[]>([]);
-  
+  const [emails, setEmails] = useState<string[]>([]);
+  const [phoneNumbers, setPhoneNumbers] = useState<string[]>([]);
   const navigate = useNavigate();
 
   const handleIncrementChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,8 +17,10 @@ const BookingDetails = () => {
     // Adjust the names and ages array based on the increment value
     const updatedNames = Array(newIncrement).fill('');
     const updatedAges = Array(newIncrement).fill(0);
+    const updatedEmail = Array(newIncrement).fill('');
     setNames(updatedNames);
     setAges(updatedAges);
+    setEmails(Array(newIncrement).fill(''));
   };
 
   const handleNameChange = (index: number, value: string) => {
@@ -31,10 +34,19 @@ const BookingDetails = () => {
     updatedAges[index] = value;
     setAges(updatedAges);
   };
-
+  const handleEmailsChange = (index: number, value: string) => {
+    const updatedEmails = [...emails];
+    updatedEmails[index] = value;
+    setEmails(updatedEmails);
+  };
+  const handlePhoneNumberChange = (index: number, value: string) => {
+    const updatedPhoneNumbers = [...phoneNumbers];
+    updatedPhoneNumbers[index] = value;
+    setPhoneNumbers(updatedPhoneNumbers);
+  };
   const handleConfirmTicket = () => {
     // Navigate to the TicketConfirmation page and pass the details
-    navigate('/ticket-confirmation', { state: { names, ages, increment } });
+    navigate('/ticket-confirmation', { state: { names, emails,phoneNumbers,ages, increment } });
   };
 
   return (
@@ -80,6 +92,29 @@ const BookingDetails = () => {
             size="small"
             sx={{ marginBottom: 2 }}
           />
+          <TextField
+            label={`Email `}
+            type="email"
+            value={emails[index]}
+            onChange={(e: { target: { value: string; }; }) => handleEmailsChange(index, e.target.value)}
+            fullWidth
+            variant="outlined"
+            size="small"
+            sx={{ marginBottom: 2 }}
+            
+          />
+           <TextField
+            label={`Phone Number `}
+            type="text"
+            value={phoneNumbers[index]}
+            onChange={(e: { target: { value: string; }; }) => handlePhoneNumberChange(index, e.target.value)}
+            fullWidth
+            variant="outlined"
+            size="small"
+            sx={{ marginBottom: 2 }}
+            
+          />
+          
         </Box>
       ))}
 
@@ -97,3 +132,7 @@ const BookingDetails = () => {
 };
 
 export default BookingDetails;
+function setEmails(arg0: any[]) {
+  throw new Error('Function not implemented.');
+}
+
