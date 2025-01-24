@@ -1,22 +1,40 @@
-import React from 'react'
-import './Header.css'
-function Header() {
+import React from 'react';
+import { AppBar, Toolbar, Typography, IconButton, Button, Box } from '@mui/material';
+import { Link } from 'react-router-dom';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
+const Header: React.FC = () => {
   return (
-    <header>
-        <div className='Brand'>
-        <h1>Eventify</h1>
-        </div>
-        <nav>
-        <ul>
-            <li>Home</li>
-            <li>Events</li>
-            <li>Whislist</li>
-        </ul>
-        </nav>
-        <button>Profile</button>
-</header>
+    <AppBar position="static" color="default" elevation={0}>
+      <Toolbar>
+        {/* Brand Name */}
+        <Typography variant="h6" style={{ flexGrow: 1 }}>
+          Eventify
+        </Typography>
 
-  )
-}
+        {/* Navigation Links */}
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button component={Link} to="/" color="inherit">
+            Home
+          </Button>
+          <Button component={Link} to="/Wishlist" color="inherit">
+            Wishlist
+          </Button>
+        </Box>
 
-export default Header
+        {/* Actions */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <IconButton color="inherit">
+            <NotificationsIcon />
+          </IconButton>
+          <IconButton component={Link} to="/Profile" color="inherit">
+            <AccountCircleIcon />
+          </IconButton>
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+export default Header;

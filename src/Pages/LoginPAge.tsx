@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './LoginPage.css';
+import '../Static/LoginPage.css';
 
 // Import FontAwesome components
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
