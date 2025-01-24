@@ -1,0 +1,148 @@
+.login-container {
+   /* Added your width style */
+  margin: 0 auto; /* Center alignment */
+  text-align: center; /* Centered text */
+  
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  padding: 50px;
+  }
+  
+  .login-register-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .login-button, .register-button {
+    width: 48%;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .login-button.active {
+    background-color: #d3e0ff;
+  }
+  
+  .register-button {
+    background-color: #f0f0f0;
+  }
+  
+  .social-login {
+    display: flex;
+    justify-content: space-around;
+    margin: 10px 0;
+  }
+  
+  .social-button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  .facebook {
+    background-color: #3b5998;
+    color: white;
+  }
+  
+  .google {
+    background-color: #db4437;
+    color: white;
+  }
+  
+  .twitter {
+    background-color: #1da1f2;
+    color: white;
+  }
+  
+  .github {
+    background-color: #333;
+    color: white;
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .input-field {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+  }
+  
+  .remember-me {
+    margin-right: 5px;
+  }
+  
+  .forgot-password {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .sign-in-button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .register-link {
+    color: #007bff;
+    text-decoration: none;
+  }
+  .social-login {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  
+  .social-button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .social-button.facebook {
+    background-color: #3b5998;
+  }
+  
+  .social-button.google {
+    background-color: #db4437;
+  }
+  
+  .social-button.twitter {
+    background-color: #1da1f2;
+  }
+  
+  .social-button.github {
+    background-color: #333;
+  }
+  
+  .social-button:hover {
+    opacity: 0.8;
+  }
+  

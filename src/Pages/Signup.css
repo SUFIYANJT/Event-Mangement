@@ -1,0 +1,100 @@
+/* General styles for the page */
+.signup-page {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Navigation Bar */
+.login-register-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.login-button,
+.register-button {
+  width: 48%;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.login-button.active,
+.register-button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.login-button {
+  background-color: #d3e0ff;
+  color: #0056b3;
+}
+
+.register-button {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.register-button:hover,
+.login-button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Signup Container */
+.signup-container {
+  width: 300px; /* Added your width style */
+  margin: 0 auto; /* Center alignment */
+  text-align: center; /* Centered text */
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.signup-container h2 {
+  margin-bottom: 20px;
+}
+
+/* Signup Form */
+.signup-form {
+  display: flex;
+  flex-direction: column; /* Added your flex direction */
+}
+
+.input-field {
+  margin: 10px 0; /* Added margin */
+  padding: 10px; /* Added padding */
+  border: 1px solid #ccc; /* Added border style */
+  border-radius: 5px; /* Added rounded corners */
+}
+
+.sign-up-button {
+  padding: 10px; /* Added padding */
+  background-color: #007bff; /* Added background color */
+  color: white; /* Added text color */
+  border: none;
+  border-radius: 5px; /* Added rounded corners */
+  cursor: pointer; /* Pointer cursor for button */
+  transition: background-color 0.3s ease;
+}
+
+.sign-up-button:hover {
+  background-color: #0056b3;
+}
+
+/* Login Link */
+.login-link {
+  color: #007bff; /* Added link color */
+  text-decoration: none; /* Removed underline */
+  transition: color 0.3s ease;
+}
+
+.login-link:hover {
+  color: #0056b3;
+}

@@ -1,0 +1,118 @@
+/* Wishlist icon */
+.wishlist-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 4;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+  
+  .wishlist-icon:hover {
+    transform: scale(1.2);
+  }
+  
+  .wishlisted {
+    color: #ff0000; /* Red color when added to wishlist */
+    transform: scale(1.4); /* Enlarged on toggle */
+  }
+  
+  /* Container for the event details */
+  .event-details {
+    width: 100%;
+    height: 80%;
+    margin: 0;
+    position: relative;
+    font-family: 'Arial', sans-serif;
+    color: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  
+  /* Fullscreen background image */
+  .event-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+  
+  /* Overlay for text readability */
+  .event-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2;
+  }
+  
+  /* Content container over the image */
+  .event-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 40px;
+    height: 100%;
+    justify-content: center;
+  }
+  
+  /* Event title */
+  .event-header h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* Event date */
+  .event-header p {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  /* "View on Google Maps" link */
+  .gmap-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1rem;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    margin-bottom: 30px;
+  }
+  
+  .gmap-link:hover {
+    background-color: #0056b3;
+  }
+  
+  /* "Book Now" button */
+  .book-now-button {
+    padding: 15px 30px;
+    margin-top: 10%;
+    margin-left: 50%;
+    background-color: #1a4cd6;
+    color: white;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+  }
+  
+  .book-now-button:hover {
+    background-color: #0e9b94;
+  }
+  
