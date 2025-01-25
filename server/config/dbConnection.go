@@ -14,7 +14,7 @@ import (
 
 var DB *gorm.DB
 
-func Connect() {
+func Connect() *gorm.DB {
 	godotenv.Load()
 	host := os.Getenv("mysql_hostname")
 	password := os.Getenv("mysql_password")
@@ -29,6 +29,7 @@ func Connect() {
 	DB = db
 	fmt.Println("Connection successfull")
 	Automigrate(db)
+	return db
 }
 func Automigrate(connection *gorm.DB) {
 	connection.Debug().AutoMigrate(

@@ -3,13 +3,13 @@ package model
 import "time"
 
 type User struct {
-	Id            uint      `json:"id"`
-	username      string    `json:"id"`
-	email         string    `json:"id"`
-	password      string    `json:"id"`
-	created_at    time.Time `json:"created_at"`
-	last_login_at time.Time `json:"last_login_at"`
-	is_admin      bool      `json:"is_admin"`
-	is_staff      bool      `json:"is_staff"`
-	is_user       bool      `json:"is_user"`
+	Id          uint      `json:"id"`
+	Username    string    `json:"username"`      // Exported field
+	Email       string    `json:"email"`         // Exported field
+	Password    string    `json:"password"`      // Exported field
+	CreatedAt   time.Time `json:"created_at"`    // Exported field
+	LastLoginAt time.Time `json:"last_login_at"` // Exported field
+	IsAdmin     bool      `json:"is_admin"`      // Exported field
+	IsStaff     bool      `json:"is_staff"`      // Exported field
+	IsUser      bool      `json:"is_user"`       // Exported field
 }
