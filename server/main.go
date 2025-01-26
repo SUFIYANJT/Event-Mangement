@@ -7,6 +7,7 @@ import (
 	"my-fiber-app/middleware"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 func main() {
@@ -15,6 +16,11 @@ func main() {
 
 	// Create a new Fiber instance
 	app := fiber.New()
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://localhost:5173",       // Change to your frontend's URL
+		AllowMethods: "GET,POST,PUT,DELETE",         // HTTP methods you want to allow
+		AllowHeaders: "Content-Type, Authorization", // Headers you want to allow
+	}))
 
 	// Set up the login route with a closure to pass the db instance
 	app.Post("/login", func(c *fiber.Ctx) error {

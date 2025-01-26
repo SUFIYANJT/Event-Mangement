@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"my-fiber-app/model"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -96,18 +97,24 @@ func SignupHandler(c *fiber.Ctx, db *gorm.DB) error {
 			"message": "Invalid request body",
 		})
 	}
-
+	fmt.Println(signupCred, len(signupCred.Username) > 5)
+	if len(signupCred.Username) < 5 || !strings.Contains(signupCred.Email, "@gmail.com") || len(signupCred.Password) < 8 {
+		return c.Status(200).JSON(fiber.Map{
+			"success": false,
+			"message": "some credential is missing",
+		})
+	}
 	// Check if the username is already taken
 	var user model.User
 	if err := db.Where("username = ?", signupCred.Username).First(&user).Error; err == nil {
 		// User exists with the given username
-		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+		return c.Status(200).JSON(fiber.Map{
 			"success": false,
 			"message": "Username is already taken",
 		})
 	} else if err != nil && err != gorm.ErrRecordNotFound {
 		// Handle database errors
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(200).JSON(fiber.Map{
 			"success": false,
 			"message": "Database error",
 		})
@@ -124,14 +131,14 @@ func SignupHandler(c *fiber.Ctx, db *gorm.DB) error {
 	}
 	token, err := GenerateJWT(newUser.Username)
 	if err != nil {
-		return c.Status(400).JSON(fiber.Map{
+		return c.Status(200).JSON(fiber.Map{
 			"success": false,
 			"message": "couldn't create token",
 		})
 	}
 	// Save the new user to the database
 	if err := db.Create(&newUser).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(200).JSON(fiber.Map{
 			"success": false,
 			"message": "Failed to create user",
 		})
