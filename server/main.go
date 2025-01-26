@@ -1,8 +1,9 @@
 package main
 
 import (
-	"my-fiber-app/config"     // Assuming this is where your DB setup is
-	"my-fiber-app/controller" // Assuming this is where your controller is
+	"my-fiber-app/config" // Assuming this is where your DB setup is
+	"my-fiber-app/controller"
+	Event "my-fiber-app/controller/private" // Assuming this is where your controller is
 	"my-fiber-app/middleware"
 
 	"github.com/gofiber/fiber/v2"
@@ -20,10 +21,17 @@ func main() {
 		return controller.Login(c, db)
 	})
 	app.Post("/event", middleware.JWTMiddleware(), func(c *fiber.Ctx) error {
-		return c.Status(200).JSON(fiber.Map{
-			"success": true,
-			"message": "event is responsing meaning authenticaton is valid",
-		})
+		return Event.Events(c, db)
+	})
+	app.Post("/eventCreation", middleware.JWTMiddleware(), func(c *fiber.Ctx) error {
+		return Event.EventCreation(c, db)
+	})
+	app.Post("/eventDeletion", middleware.JWTMiddleware(), func(c *fiber.Ctx) error {
+		return Event.EventCreation(c, db)
+	})
+	//ja
+	app.Post("/signup", func(c *fiber.Ctx) error {
+		return controller.SignupHandler(c, db)
 	})
 
 	// Start the server

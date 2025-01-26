@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"my-fiber-app/model"
 	"time"
 
@@ -56,11 +57,93 @@ func Login(c *fiber.Ctx, db *gorm.DB) error {
 			"error": "Invalid username or password",
 		})
 	}
+	token, err := GenerateJWT(loginRequest.Username)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"message": "couldn't create token",
+		})
+	}
+	fmt.Println("User login updated...")
+	if err := db.Model(&user).Update("LastLoginAt", time.Now()).Error; err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Invalid username or password",
+		})
+	}
 
 	// If the login is successful, return a success response
 	return c.JSON(fiber.Map{
-		"message": "Login successful",
-		"user":    user,
+		"sucess": true,
+		"message": fiber.Map{
+			"token": token,
+			"user":  user,
+		},
+	})
+}
+
+type SignupCred struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
+}
+
+func SignupHandler(c *fiber.Ctx, db *gorm.DB) error {
+	// Parse the JSON body into the SignupCred struct
+	var signupCred SignupCred
+	if err := c.BodyParser(&signupCred); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Invalid request body",
+		})
+	}
+
+	// Check if the username is already taken
+	var user model.User
+	if err := db.Where("username = ?", signupCred.Username).First(&user).Error; err == nil {
+		// User exists with the given username
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"success": false,
+			"message": "Username is already taken",
+		})
+	} else if err != nil && err != gorm.ErrRecordNotFound {
+		// Handle database errors
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Database error",
+		})
+	}
+
+	// If username is not taken, create a new user
+	newUser := model.User{
+		Username:    signupCred.Username,
+		Password:    signupCred.Password, // You should hash the password here
+		Email:       signupCred.Email,
+		CreatedAt:   time.Now(),
+		LastLoginAt: time.Now(),
+		IsUser:      true,
+	}
+	token, err := GenerateJWT(newUser.Username)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"message": "couldn't create token",
+		})
+	}
+	// Save the new user to the database
+	if err := db.Create(&newUser).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to create user",
+		})
+	}
+
+	// Respond with success
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
+		"message": fiber.Map{
+			"token": token,
+			"user":  newUser,
+		},
 	})
 }
 
