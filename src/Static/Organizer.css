@@ -1,0 +1,124 @@
+/* Main Page Styles */
+.event-card {
+    display: flex;
+    flex-direction: row; /* Align content horizontally */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+  }
+  
+  .event-card:hover {
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .event-card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .text-content {
+    flex: 1; /* Takes up remaining space */
+    padding-right: 20px;
+  }
+  
+  .image-container {
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+  
+  .image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* Drawer Styles */
+  .MuiDrawer-paper {
+    padding: 16px;
+    border-radius: 12px 12px 0 0;
+    background-color: #f5f5f5;
+    max-width: 400px;
+  }
+  
+  .MuiButton-root {
+    text-transform: none;
+  }
+  
+  /* AppBar Styles */
+  .MuiAppBar-root {
+    background-color: #1976d2;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .MuiTypography-root {
+    color: #fff;
+  }
+  
+  .MuiIconButton-root {
+    color: #fff;
+  }
+  
+  /* Event Details Section */
+  .event-details-box {
+    margin: 3rem 2rem;
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+  }
+  
+  .event-details-box h6 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .event-details-box p {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+  
+  strong {
+    font-weight: bold;
+  }
+  
+  /* Floating Action Button */
+  .MuiFab-root {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 10;
+  }
+  
+  /* Skeleton Loader Styles */
+  .MuiSkeleton-root {
+    margin: 3rem 2rem;
+    border-radius: 8px;
+  }
+  
+  /* Form Styles */
+  .MuiTextField-root {
+    margin-bottom: 1rem;
+  }
+  
+  .MuiButton-root {
+    width: 100%;
+    margin-top: 1rem;
+  }
+  
+  .MuiTypography-body2 {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .MuiTextField-root input,
+  .MuiTextField-root textarea {
+    background-color: #fff;
+  }
+  

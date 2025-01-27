@@ -10,8 +10,9 @@ import { faFacebook, faGoogle, faTwitter, faGithub } from '@fortawesome/free-bra
 interface Credential {
   username: string,
   email: string,
-  password: string
-  con_password: string
+  password: string,
+  con_password: string,
+  isOrganizer: boolean // Added field to track if the user is an organizer
 }
 
 const Signup = () => {
@@ -19,11 +20,14 @@ const Signup = () => {
     username: "",
     email: "",
     password: "",
-    con_password: ""
+    con_password: "",
+    isOrganizer: false, // Default to false, meaning the user is not an organizer
   });
+
   const handleSignup = async (e: React.FormEvent) => {
     try {
-      console.log(cred)
+      e.preventDefault(); // Prevent form from refreshing the page
+      console.log(cred);
       const response = await axios.post("http://127.0.0.1:3000/signup", cred, {
         headers: {
           "Content-Type": "application/json", // Specify JSON in the headers
@@ -31,16 +35,16 @@ const Signup = () => {
       });
       console.log("Response:", response.data);
       if (response.data["success"]) {
-        console.log("Navigate to home page")
+        console.log("Navigate to home page");
       } else {
         alert(response.data["message"]);
       }
-
     } catch (error) {
       console.error("Error submitting data:", error);
       alert("Failed to submit data.");
     }
-  }
+  };
+
   return (
     <div className="signup-container">
       {/* Navigation Bar */}
@@ -68,7 +72,7 @@ const Signup = () => {
       </div>
 
       <p>or:</p>
-      <form className="signup-form">
+      <form className="signup-form" onSubmit={handleSignup}>
         <input
           type="text"
           placeholder="Username"
@@ -81,32 +85,70 @@ const Signup = () => {
           }}
           value={cred.username}
         />
-        <input type="email" placeholder="Email" className="input-field" onChange={(eve) => {
-          setCred((prev) => ({
-            ...prev,
-            email: eve.target.value,
-          }));
-        }}
+        <input
+          type="email"
+          placeholder="Email"
+          className="input-field"
+          onChange={(eve) => {
+            setCred((prev) => ({
+              ...prev,
+              email: eve.target.value,
+            }));
+          }}
           value={cred.email}
         />
-        <input type="password" placeholder="Password" className="input-field" onChange={(eve) => {
-          setCred((prev) => ({
-            ...prev,
-            password: eve.target.value,
-          }));
-        }}
+        <input
+          type="password"
+          placeholder="Password"
+          className="input-field"
+          onChange={(eve) => {
+            setCred((prev) => ({
+              ...prev,
+              password: eve.target.value,
+            }));
+          }}
           value={cred.password}
         />
-        <input type="password" placeholder="Confirm Password" className="input-field" onChange={(eve) => {
-          setCred((prev) => ({
-            ...prev,
-            con_password: eve.target.value,
-          }));
-        }}
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          className="input-field"
+          onChange={(eve) => {
+            setCred((prev) => ({
+              ...prev,
+              con_password: eve.target.value,
+            }));
+          }}
           value={cred.con_password}
         />
-        <button type="submit" className="sign-up-button" onClick={handleSignup}>SIGN UP</button>
 
+        {/* Radio buttons for user type */}
+        <div className="radio-group">
+          <label>
+            <input
+              type="radio"
+              name="userType"
+              value="user"
+              checked={!cred.isOrganizer}
+              onChange={() => setCred((prev) => ({ ...prev, isOrganizer: false }))}
+            />
+            Regular User
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="userType"
+              value="organizer"
+              checked={cred.isOrganizer}
+              onChange={() => setCred((prev) => ({ ...prev, isOrganizer: true }))}
+            />
+            Organizer
+          </label>
+        </div>
+
+        <button type="submit" className="sign-up-button">
+          SIGN UP
+        </button>
       </form>
 
       <p>
