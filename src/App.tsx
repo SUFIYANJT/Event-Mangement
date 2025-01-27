@@ -10,12 +10,14 @@ import BookingDetails from './Pages/BookingDetails';
 import TicketConfirmation from './Pages/TicketConfirmation';
 import Profile from './Pages/Profile';
 import Orgainzer from './Pages/Orgainzer';
+import LandingScreen from './Pages/LandingScreen'
 const App = () => {
   return (
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<LandingScreen />} />
+          <Route path='/Login' element={<Login/>} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/HomePage" element={<HomePage />} />
           <Route path="/event-details/:data" element={<DetailsEvent />} />
