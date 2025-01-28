@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddIcon from '@mui/icons-material/Add';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface EventDetails {
   name: string;
@@ -29,6 +29,7 @@ const Organizer: React.FC = () => {
     slots: '',
     image: null,
   });
+  const navigator = useNavigate()
 
   const [submittedDetails, setSubmittedDetails] = useState<EventDetails | null>(null);
 
@@ -65,6 +66,13 @@ const Organizer: React.FC = () => {
               <AccountCircleIcon />
             </IconButton>
           </Box>
+          <Button onClick={(eve:React.FormEvent)=>{
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+            navigator("/")
+          }}>
+            logout
+          </Button>
         </Toolbar>
       </AppBar>
 

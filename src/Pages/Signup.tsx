@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import '../Static/Signup.css';
 import axios from "axios";
 
@@ -21,6 +21,38 @@ const Signup = () => {
     password: "",
     con_password: ""
   });
+  const navigator = useNavigate()
+  useEffect(() => {
+    console.log(localStorage.getItem('token'), localStorage.getItem('user'))
+    if (localStorage.getItem("token") != null || localStorage.getItem("token") != "") {
+      const check = async () => {
+        try {
+          const response = await axios.post("http://127.0.0.1:3000/check", {},
+            {
+              headers: {
+                "Content-Type": "application/json", // Specify JSON in the headers
+                Authorization: localStorage.getItem('token')
+              },
+            }
+          )
+          if (response.data['success']) {
+
+
+            const user = JSON.parse(localStorage.getItem('user') || "{}")
+            console.log("user", user);
+            if (user["id"] != null && user["is_staff"]) {
+              navigator("/Orgainzer")
+            } else {
+              navigator("/HomePage")
+            }
+          }
+        } catch (err) {
+          console.error(err)
+        }
+      }
+      check();
+    }
+  }, [])
   const handleSignup = async (e: React.FormEvent) => {
     try {
       console.log(cred)
@@ -31,7 +63,17 @@ const Signup = () => {
       });
       console.log("Response:", response.data);
       if (response.data["success"]) {
+        localStorage.setItem('token', response.data["message"]["token"])
+        localStorage.setItem('user', JSON.stringify(response.data["message"]["user"]))
+        console.log(localStorage.getItem('token'), localStorage.getItem('user'), response.data);
         console.log("Navigate to home page")
+        const user = JSON.parse(localStorage.getItem('user') || "{}")
+        console.log("user", user);
+        if (user["id"] != null && user["is_staff"]) {
+          navigator("/Orgainzer")
+        } else {
+          navigator("/HomePage")
+        }
       } else {
         alert(response.data["message"]);
       }

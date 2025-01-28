@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"my-fiber-app/config" // Assuming this is where your DB setup is
 	"my-fiber-app/controller"
 	Event "my-fiber-app/controller/private" // Assuming this is where your controller is
@@ -41,6 +42,7 @@ func main() {
 	})
 
 	app.Post("/check", middleware.JWTMiddleware(), func(c *fiber.Ctx) error {
+		fmt.Println("Checking the validity of token...")
 		return c.Status(200).JSON(fiber.Map{
 			"success": true,
 			"message": "Valid token ",

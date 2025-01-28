@@ -19,6 +19,8 @@ const Login = () => {
   })
   const navigator = useNavigate()
   useEffect(() => {
+    console.log(localStorage.getItem('token'));
+    
     if (localStorage.getItem('token') != null) {
       const check = async () => {
         try {
@@ -66,7 +68,7 @@ const Login = () => {
 
         alert("New user logined")
       } else {
-        alert(response.data["message"]);
+        alert(response.data["message"]["user"]["username"] + " is logging in ");
       }
 
     } catch (error) {

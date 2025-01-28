@@ -74,7 +74,7 @@ func Login(c *fiber.Ctx, db *gorm.DB) error {
 
 	// If the login is successful, return a success response
 	return c.JSON(fiber.Map{
-		"sucess": true,
+		"success": true,
 		"message": fiber.Map{
 			"token": token,
 			"user":  user,

@@ -59,7 +59,6 @@ const Homepage = () => {
         // Handle the server response
         if (response.data.success) {
           console.log("Event created successfully, navigate to home page");
-          localStorage.setItem("token", response.data.message.token); // Store the new token if needed
         } else {
           alert(response.data.message); // Show error message if any
         }
