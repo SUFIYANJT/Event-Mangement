@@ -4,8 +4,8 @@ import "time"
 
 type User struct {
 	Id          uint      `json:"id"`
-	Username    string    `json:"username"`      // Exported field
-	Email       string    `json:"email"`         // Exported field
+	Username    string    `json:"username"` // Exported field
+	Email       string    `json:"email" gorm:"unique;not null"`
 	Password    string    `json:"password"`      // Exported field
 	CreatedAt   time.Time `json:"created_at"`    // Exported field
 	LastLoginAt time.Time `json:"last_login_at"` // Exported field

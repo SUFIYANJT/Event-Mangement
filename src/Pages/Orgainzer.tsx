@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from 'react';
+import React, { useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -9,36 +9,28 @@ import {
   Drawer,
   TextField,
   Button,
-  Skeleton,
 } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
-import '../Static/Organizer.css';
+
 interface EventDetails {
-  Tag: ReactNode;
-  Location: ReactNode; // Fixed typo: changed 'Loaction' to 'Location'
   name: string;
   description: string;
   slots: string;
   image: File | null;
-  date: string;
 }
 
 const Organizer: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [eventDetails, setEventDetails] = useState<EventDetails>({
-    Tag: '',
-    Location: '',
     name: '',
     description: '',
     slots: '',
     image: null,
-    date: '',
   });
 
   const [submittedDetails, setSubmittedDetails] = useState<EventDetails | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
 
   // Input Change Handler
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -48,38 +40,21 @@ const Organizer: React.FC = () => {
 
   // Image Upload Handler
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+    const files = e.target.files; // Extract files safely
     if (files && files.length > 0) {
       setEventDetails((prev) => ({ ...prev, image: files[0] }));
     }
   };
 
-  // Date Change Handler
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setEventDetails((prev) => ({ ...prev, date: value }));
-  };
-
   // Done Button Handler
   const handleDone = () => {
-    setLoading(true);
     setSubmittedDetails(eventDetails);
-    setDrawerOpen(false);
-
-    // Simulate loading
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-  };
-
-  // Format the time to a more readable format (HH:mm)
-  const formatTime = (dateString: string): string => {
-    const date = new Date(dateString);
-    return `${date.getHours()}:${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}`;
+    setDrawerOpen(false); // Close the drawer
   };
 
   return (
     <div>
+      {/* AppBar */}
       <AppBar position="static" color="default" elevation={0}>
         <Toolbar>
           <Typography variant="h6" style={{ flexGrow: 1 }}>
@@ -115,7 +90,7 @@ const Organizer: React.FC = () => {
         sx={{
           '& .MuiDrawer-paper': {
             padding: 3,
-            borderRadius: '12px 12px 0 0',
+            borderRadius: '12px 12px 0 0', // Rounded corners for top
           },
         }}
       >
@@ -147,28 +122,6 @@ const Organizer: React.FC = () => {
             onChange={handleInputChange}
             fullWidth
           />
-          <TextField
-            label="Event Date & Time"
-            type="datetime-local"
-            name="date"
-            value={eventDetails.date}
-            onChange={handleDateChange}
-            fullWidth
-          />
-          <TextField
-            label="Tag"
-            name="Tag"
-            value={eventDetails.Tag}
-            onChange={handleInputChange}
-            fullWidth
-          />
-          <TextField
-            label="Location"
-            name="Location"
-            value={eventDetails.Location}
-            onChange={handleInputChange}
-            fullWidth
-          />
           <Button variant="outlined" component="label">
             Upload Image
             <input type="file" hidden onChange={handleImageUpload} />
@@ -178,51 +131,31 @@ const Organizer: React.FC = () => {
               {eventDetails.image.name}
             </Typography>
           )}
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleDone}
-          >
+          <Button variant="contained" color="primary" onClick={handleDone}>
             Done
           </Button>
         </Box>
       </Drawer>
 
       {/* Submitted Details Display */}
-      {loading ? (
-        <Skeleton variant="rectangular" width="100%" height={200} />
-      ) : (
-        submittedDetails && (
-          <Box sx={{ margin: 3, padding: 3, border: '1px solid #ddd', borderRadius: 2 }}>
-            <Typography variant="h6">Event Details</Typography>
+      {submittedDetails && (
+        <Box sx={{ margin: 3, padding: 3, border: '1px solid #ddd', borderRadius: 2 }}>
+          <Typography variant="h6">Event Details</Typography>
+          <Typography variant="body1">
+            <strong>Name:</strong> {submittedDetails.name}
+          </Typography>
+          <Typography variant="body1">
+            <strong>Description:</strong> {submittedDetails.description}
+          </Typography>
+          <Typography variant="body1">
+            <strong>Available Slots:</strong> {submittedDetails.slots}
+          </Typography>
+          {submittedDetails.image && (
             <Typography variant="body1">
-              <strong>Name:</strong> {submittedDetails.name}
+              <strong>Uploaded Image:</strong> {submittedDetails.image.name}
             </Typography>
-            <Typography variant="body1">
-              <strong>Description:</strong> {submittedDetails.description}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Available Slots:</strong> {submittedDetails.slots}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Location:</strong> {submittedDetails.Location}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Tag:</strong> {submittedDetails.Tag}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Event Date:</strong> {submittedDetails.date}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Event Time:</strong> {formatTime(submittedDetails.date)}
-            </Typography>
-            {submittedDetails.image && (
-              <Typography variant="body1">
-                <strong>Uploaded Image:</strong> {submittedDetails.image.name}
-              </Typography>
-            )}
-          </Box>
-        )
+          )}
+        </Box>
       )}
     </div>
   );

@@ -1,12 +1,79 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import '../Static/LoginPage.css';
 
 // Import FontAwesome components
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faGoogle, faTwitter, faGithub } from '@fortawesome/free-brands-svg-icons';
+import axios from 'axios';
+
+interface Credential {
+  username: string,
+  password: string
+}
 
 const Login = () => {
+  const [cred, setCred] = useState({
+    username: "",
+    password: ""
+  })
+  const navigator = useNavigate()
+  useEffect(() => {
+    if (localStorage.getItem('token') != null) {
+      const check = async () => {
+        try {
+          const response = await axios.post("http://127.0.0.1:3000/check", {},
+            {
+              headers: {
+                "Content-Type": "application/json", // Specify JSON in the headers
+                Authorization: localStorage.getItem('token')
+              },
+            }
+          )
+          if (response.data['success']) {
+            const user = JSON.parse(localStorage.getItem('user') || "{}")
+            if (user["id"] != null && user["is_staff"]) {
+              navigator("/Orgainzer")
+            } else {
+              navigator("/HomePage")
+            }
+          }
+        } catch (err) {
+          console.error(err)
+        }
+      }
+      check();
+    } else {
+      console.log("token is null");
+
+    }
+  }, [])
+  const handleSubmit = async (eve: React.FormEvent) => {
+    try {
+      console.log(cred)
+      const response = await axios.post("http://127.0.0.1:3000/login", cred, {
+        headers: {
+          "Content-Type": "application/json", // Specify JSON in the headers
+        },
+      });
+      console.log("Response:", response.data);
+
+      if (response.data["success"]) {
+        console.log("Navigate to home page")
+        localStorage.setItem('token', response.data["message"]["token"])
+        localStorage.setItem('user', JSON.stringify(response.data["message"]["user"]))
+        console.log(localStorage.getItem('token'), localStorage.getItem('user'), response.data);
+
+        alert("New user logined")
+      } else {
+        alert(response.data["message"]);
+      }
+
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      alert("Failed to submit data.");
+    }
+  }
   return (
     <div className="login-container">
       <div className="login-register-buttons">
@@ -31,15 +98,26 @@ const Login = () => {
         </button>
       </div>
       <p>or:</p>
-      <form className="login-form">
-        <input type="text" placeholder="Email or username" className="input-field" />
-        <input type="password" placeholder="Password" className="input-field" />
+      <form onSubmit={handleSubmit} className="login-form">
+        <input type="text" placeholder="Email or username" className="input-field" value={cred.username} onChange={(eve) => {
+          setCred((prev) => ({
+            ...prev,
+            username: eve.target.value,
+          }));
+        }} />
+        <input type="password" placeholder="Password" className="input-field" value={cred.password}
+          onChange={(eve) => {
+            setCred((prev) => ({
+              ...prev,
+              password: eve.target.value,
+            }));
+          }} />
         <div className="remember-forgot">
           <label>
             <input type="checkbox" className="remember-me" />
             Remember me<br></br>
-          </label>  
-          
+          </label>
+
           <a href="#" className="forgot-password">Forgot password?</a>
         </div>
         <button type="submit" className="sign-in-button">SIGN IN</button>

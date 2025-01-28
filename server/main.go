@@ -40,6 +40,13 @@ func main() {
 		return controller.SignupHandler(c, db)
 	})
 
+	app.Post("/check", middleware.JWTMiddleware(), func(c *fiber.Ctx) error {
+		return c.Status(200).JSON(fiber.Map{
+			"success": true,
+			"message": "Valid token ",
+		})
+	})
+
 	// Start the server
 	app.Listen(":3000")
 }

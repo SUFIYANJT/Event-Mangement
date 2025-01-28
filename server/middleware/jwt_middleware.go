@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"strings"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -15,9 +17,13 @@ func JWTMiddleware() fiber.Handler {
 		// If the token is not provided, return an error
 		if tokenString == "" {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"error": "missing token",
+				"success": false,
+				"error":   "missing token",
 			})
 		}
+
+		// Remove the "Bearer " prefix if it exists
+		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
 		// Parse and validate the token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -30,7 +36,8 @@ func JWTMiddleware() fiber.Handler {
 
 		if err != nil || !token.Valid {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"error": "invalid token",
+				"success": false,
+				"error":   "invalid token",
 			})
 		}
 

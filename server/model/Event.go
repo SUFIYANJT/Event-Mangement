@@ -10,9 +10,10 @@ type Event struct {
 	CreatedAt   time.Time `json:"created_at"`
 
 	// Foreign key to User
-	CreatedByID uint `json:"created_by_id"` // Foreign key ID field
-	CreatedBy   User `json:"created_by"`    // Association to User struct
-	Deleted     bool `json:"deleted" gorm:"default:false"`
+	CreatedByID uint   `json:"created_by_id"` // Foreign key ID field
+	CreatedBy   User   `json:"created_by"`    // Association to User struct
+	Deleted     bool   `json:"deleted" gorm:"default:false"`
+	Location    string `json:"location"`
 }
 
 type EventDeletion struct {

@@ -1,10 +1,12 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Button, Box } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
+
 const Header: React.FC = () => {
+  const navigator = useNavigate()
   return (
     <AppBar position="static" color="default" elevation={0}>
       <Toolbar>
@@ -20,6 +22,13 @@ const Header: React.FC = () => {
           </Button>
           <Button component={Link} to="/Wishlist" color="inherit">
             Wishlist
+          </Button>
+          <Button onClick={(eve:React.FormEvent)=>{
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            navigator("/")
+          }} color="#ff0000">
+            Logout
           </Button>
         </Box>
 
