@@ -13,10 +13,12 @@ interface Events {
   created_by: string,
   file_path: string,
   slots: number,
+  eventdate:string
 }
 
 const Homepage = () => {
-  const [events, SetEvents] = useState()
+  const [events, SetEvents] = useState<Events[]>([])
+  const [eventView,setEventViews] = useState<React.ReactNode[]>([])
 
   useEffect(() => {
     // Define an async function inside the effect
@@ -27,21 +29,21 @@ const Homepage = () => {
         alert('User data is missing');
         return;
       }
-    
+
       const user = JSON.parse(userStr);
       console.log('User:', user);
-    
+
       // Retrieve token from localStorage
       const token = localStorage.getItem('token');
       if (!token) {
         alert('Token is missing');
         return;
       }
-      console.log("token is :"+token)
-    
+      console.log("token is :" + token)
+
       try {
         console.log("Sending user data to server...");
-    
+
         // Send the request with proper headers and body
         const response = await axios.post(
           "http://127.0.0.1:3000/event", // Your API endpoint
@@ -53,12 +55,29 @@ const Homepage = () => {
             },
           }
         );
-    
+
         console.log("Response:", response.data);
-    
+        
+
         // Handle the server response
         if (response.data.success) {
+          SetEvents([])
           console.log("Event created successfully, navigate to home page");
+          if (response.data.message instanceof Array) {
+            response.data.message.map((element: any) => {
+              const newElement: Events = {
+                name: element.name,
+                description: element.description,
+                slots: element.slots,
+                file_path: element.image,
+                created_at: element.created_at,
+                created_by: element.created_by,
+                eventdate:element.event_date
+              }
+              SetEvents((prev)=>[...prev,newElement])
+            })
+          }
+      
         } else {
           alert(response.data.message); // Show error message if any
         }
@@ -67,13 +86,43 @@ const Homepage = () => {
         alert("Failed to submit data.");
       }
     };
-    
+
     // Call the async function
     signupUser();
-    
+
 
     // Call the async function
   }, []); // Include 'cred' as a dependency to track changes
+
+  useEffect(() => {
+    var count = 0;
+    events.map((element)=>{
+      setEventViews((prev)=>[...prev,(
+        <div key={count++} className="event-card">
+                <img src={"http://127.0.0.1:3000"+element.file_path} alt={element.name} />
+                <div className="event-card-content">
+                  <h3>{element.name}</h3>
+                  <p>{element.description}</p>
+                  <p className="location">{element.eventdate}</p>
+                  <Link
+                    to={`/event-details/${encodeURIComponent(
+                      JSON.stringify({
+                        title: element.name,
+                        desc: element.description,
+                        date: element.eventdate,
+                        image: element.file_path,
+                        slots: element.slots
+                      })
+                    )}`}
+                    className="details-link"
+                  >
+                    <Button variant='outlined'>{"Book Now"}</Button>
+                  </Link>
+                </div>
+              </div>
+      )])
+    })
+  }, [events])
   return (
     <div>
       <Header />
@@ -85,50 +134,7 @@ const Homepage = () => {
         <section>
           <h2>Tickets Live</h2>
           <div className="event-highlights">
-            {[
-              {
-                title: 'Music Fest',
-                desc: 'Join us for a night of unforgettable music and energy.',
-                date: 'November 12, 2023',
-                action: 'Buy Tickets',
-                image: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?cs=srgb&dl=pexels-sebastian-ervi-866902-1763075.jpg&fm=jpg',
-                location: 'India',
-                slots: 9
-              },
-              {
-                title: 'Art Expo',
-                desc: 'Explore modern art at its finest with our curated exhibition.',
-                date: 'October 28, 2023',
-                action: 'Buy Tickets',
-                image: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?cs=srgb&dl=pexels-sebastian-ervi-866902-1763075.jpg&fm=jpg',
-                location: 'India',
-                slots: 9
-              }
-            ].map((highlight, idx) => (
-              <div key={idx} className="event-card">
-                <img src={highlight.image} alt={highlight.title} />
-                <div className="event-card-content">
-                  <h3>{highlight.title}</h3>
-                  <p>{highlight.desc}</p>
-                  <p className="location">{highlight.date}</p>
-                  <Link
-                    to={`/event-details/${encodeURIComponent(
-                      JSON.stringify({
-                        title: highlight.title,
-                        desc: highlight.desc,
-                        date: highlight.date,
-                        image: highlight.image,
-                        location: highlight.location,
-                        slots: highlight.slots
-                      })
-                    )}`}
-                    className="details-link"
-                  >
-                    <Button variant='outlined'>{highlight.action}</Button>
-                  </Link>
-                </div>
-              </div>
-            ))}
+            {eventView}
           </div>
         </section>
 

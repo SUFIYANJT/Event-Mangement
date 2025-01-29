@@ -43,6 +43,24 @@ func main() {
 	app.Post("/signup", func(c *fiber.Ctx) error {
 		return controller.SignupHandler(c, db)
 	})
+	app.Get("/uploads/:filename", func(c *fiber.Ctx) error {
+
+		// Get the filename from the URL parameter
+		filename := c.Params("filename")
+		fmt.Println("Requesting for " + filename)
+		filePath := "./uploads/" + filename // Adjust the directory as per your setup
+
+		// Serve the file
+		err := c.SendFile(filePath)
+		if err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"success": false,
+				"message": "File not found",
+			})
+		}
+
+		return nil
+	})
 
 	app.Post("/check", middleware.JWTMiddleware(), func(c *fiber.Ctx) error {
 		fmt.Println("Checking the validity of token...")
