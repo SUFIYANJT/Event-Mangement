@@ -3,8 +3,10 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
-	"my-fiber-app/model"
+
 	"time"
+
+	"my-fiber-app/model"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
@@ -41,76 +43,132 @@ func CreateOrder(c *fiber.Ctx) error {
 	return c.Status(200).Send(resp.Body())
 }
 
+type RazorpayResponse struct {
+	PaymentID string `json:"razorpay_payment_id"`
+	OrderID   string `json:"razorpay_order_id"`
+	Signature string `json:"razorpay_signature"`
+}
+
+type User struct {
+	Id          uint      `json:"id"`
+	Username    string    `json:"username"`
+	Email       string    `json:"email"`
+	Password    string    `json:"password"`
+	CreatedAt   time.Time `json:"created_at"`
+	LastLoginAt time.Time `json:"last_login_at"`
+	IsAdmin     bool      `json:"is_admin"`
+	IsStaff     bool      `json:"is_staff"`
+	IsUser      bool      `json:"is_user"`
+}
+
+type Event struct {
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Slots       int       `json:"slots"`
+	FilePath    string    `json:"file_path"`
+	CreatedAt   time.Time `json:"created_at"`
+	CreatedBy   User      `json:"created_by"`
+	EventDate   time.Time `json:"eventdate"`
+}
+
+type BookingDetails struct {
+	Increment   int      `json:"increment"`
+	Names       []string `json:"names"`
+	Ages        []int    `json:"ages"`
+	Emails      []string `json:"emails"`
+	PhoneNumber string   `json:"phoneNumber"`
+}
+
 type RazorpayRequest struct {
-	User string `json:"user"`
-	Res  string `json:"res"`
+	Response       RazorpayResponse `json:"response"`
+	User           User             `json:"user"`
+	Event          Event            `json:"event"`
+	BookingDetails BookingDetails   `json:"bookingdetails"`
 }
 
 func Booking(c *fiber.Ctx, db *gorm.DB) error {
 	fmt.Println("Booking table insertion...")
 
-	var razorpayReq RazorpayRequest
+	// Parse JSON request
+	var razorpayReq struct {
+		Response       RazorpayResponse `json:"response"`
+		User           string           `json:"user"`
+		Event          string           `json:"event"`
+		BookingDetails string           `json:"bookingdetails"`
+	}
+
 	if err := c.BodyParser(&razorpayReq); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
-	}
-
-	type User struct {
-		Id          uint      `json:"id"`
-		Username    string    `json:"username"` // Exported field
-		Email       string    `json:"email" gorm:"unique;not null"`
-		Password    string    `json:"password"`      // Exported field
-		CreatedAt   time.Time `json:"created_at"`    // Exported field
-		LastLoginAt time.Time `json:"last_login_at"` // Exported field
-		IsAdmin     bool      `json:"is_admin"`      // Exported field
-		IsStaff     bool      `json:"is_staff"`      // Exported field
-		IsUser      bool      `json:"is_user"`       // Exported field
-	}
-
-	var dataUser User
-
-	er := json.Unmarshal([]byte(razorpayReq.User), &dataUser)
-	if er != nil {
-		return c.Status(200).JSON(fiber.Map{
+		return c.Status(400).JSON(fiber.Map{
 			"success": false,
-			"message": "error in json converting",
+			"message": "Invalid request body: " + err.Error(),
 		})
 	}
 
-	var user model.User
-	if err := db.Where("Username = ?", dataUser.Username).First(&user).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"error": "Invalid username or password",
-			})
-		}
-		// Handle other possible errors
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Database error",
-		})
-	}
-
-	/*newBook:= book.Booking(
-		UserID       : dataUser.Id
-		User       :    user
-		EventID       :
-		Event         :
-		TransactionID   :
-		RazorpayOrderID :
-		CreatedAt:      time.Now()
-	)
-
-	if err := db.Create(&book).Error; err != nil {
-		return c.Status(200).JSON(fiber.Map{
+	// Unmarshal the nested JSON fields
+	var dataUser model.User
+	if err := json.Unmarshal([]byte(razorpayReq.User), &dataUser); err != nil {
+		return c.Status(400).JSON(fiber.Map{
 			"success": false,
-			"message": "Failed to create event",
+			"message": "Error parsing user data: " + err.Error(),
 		})
-	}*/
+	}
 
-	fmt.Printf("Received booking: User=%s, Res=%s\n", razorpayReq.User, razorpayReq.Res)
+	var event model.Event
+	if err := json.Unmarshal([]byte(razorpayReq.Event), &event); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"message": "Error parsing event data: " + err.Error(),
+		})
+	}
+
+	var bookingDetails BookingDetails
+	if err := json.Unmarshal([]byte(razorpayReq.BookingDetails), &bookingDetails); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"message": "Error parsing booking details: " + err.Error(),
+		})
+	}
+
+	// Debugging: Print parsed data
+	fmt.Println("Parsed User:", dataUser)
+	fmt.Println("Parsed Event:", event)
+	fmt.Println("Parsed Booking Details:", bookingDetails)
+
+	// 🔹 FIND EVENT IN DATABASE BEFORE INSERTING
+	var existingEvent model.Event
+	result := db.Where("name = ? AND created_by_id = ?", event.Name, event.CreatedBy.Id).First(&existingEvent)
+
+	if result.Error != nil {
+		// If the event doesn't exist, return an error
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"message": "Event not found. Please create the event first.",
+		})
+	}
+
+	// Insert into Booking Table
+	newBooking := model.Booking{
+		UserID:          dataUser.Id,
+		User:            dataUser,
+		EventID:         existingEvent.Id, // ✅ Use existing event ID
+		Event:           existingEvent,
+		TransactionID:   razorpayReq.Response.PaymentID,
+		RazorpayOrderID: razorpayReq.Response.OrderID,
+		CreatedAt:       time.Now(),
+	}
+
+	// Save booking in DB
+	if err := db.Create(&newBooking).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to save booking: " + err.Error(),
+		})
+	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"message": "Booking received successfully",
-		"user":    razorpayReq.User,
-		"res":     razorpayReq.Res,
+		"message": "Booking successful",
+		"user":    dataUser,
+		"event":   existingEvent,
+		"details": bookingDetails,
 	})
 }

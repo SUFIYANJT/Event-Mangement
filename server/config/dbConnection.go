@@ -35,5 +35,6 @@ func Automigrate(connection *gorm.DB) {
 	connection.Debug().AutoMigrate(
 		&model.User{},
 		&model.Event{},
+		&model.Booking{},
 	)
 }

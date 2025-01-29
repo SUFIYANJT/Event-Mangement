@@ -12,7 +12,7 @@ const BookingDetails = () => {
   const [snackbarMessage, setSnackbarMessage] = useState(''); // Snackbar message
   const [snackbarSeverity, setSnackbarSeverity] = useState<'error' | 'success'>('error'); // Error or Success message severity
   const navigate = useNavigate();
-
+  
   const handleIncrementChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let newIncrement = parseInt(e.target.value);
     if (newIncrement > 4) newIncrement = 4; // Restrict max to 4
@@ -70,7 +70,14 @@ const BookingDetails = () => {
       setOpenSnackbar(true);
       return;
     }
-
+    const data = {
+      increment,
+      names,
+      ages,
+      emails,
+      phoneNumber,
+    };
+    localStorage.setItem('bookingdetails',JSON.stringify(data))
     // Navigate to the TicketConfirmation page and pass the details
     navigate('/ticket-confirmation', { state: { names, emails, phoneNumber, ages, increment } });
   };

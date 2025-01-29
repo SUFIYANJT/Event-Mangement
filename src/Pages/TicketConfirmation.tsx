@@ -9,6 +9,8 @@ const TicketConfirmation = () => {
   const { names, ages, increment } = location.state || {};
   const str = localStorage.getItem('user')
   const user = JSON.parse(str!=null?str:'Anonymous')
+  console.log(user);
+  
 
   const loadRazorpay = async () => {
     return new Promise((resolve) => {
@@ -45,7 +47,7 @@ const TicketConfirmation = () => {
   
     // 2. Initialize Razorpay Checkout
     const options = {
-      key: 'rzp_test_B8eLvy5XIIbavj', // Replace with your actual key
+      key: 'rzp_test_vkT5AGIncSRL2d', // Replace with your actual key
       amount: 5000,
       currency: 'INR',
       name: 'Event Booking',
@@ -53,18 +55,36 @@ const TicketConfirmation = () => {
       order_id: orderId,
       handler: async function (response: any) {
         alert('Payment successful!');
+        const event = localStorage.getItem('event')
+        const eve = JSON.parse(event!=null?event:"")
+        const bookingdetails = localStorage.getItem('bookingdetails')
+        const bookdet = JSON.parse(bookingdetails!=null?bookingdetails:"None")
         console.log(response);//login
+        console.log(JSON.stringify({
+          response: {
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+          },
+          user: JSON.stringify(user),         
+          event: JSON.stringify(eve),         
+          bookingdetails: JSON.stringify(bookdet),
+        }));
         try{
           const res = await axios.post("http://127.0.0.1:3000/booking", {
-            response,user
-          },
-            {
-              headers: {
-                "Content-Type": "application/json"// Specify JSON in the headers
-              },
-            }
-          )
+            response: {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            },
+            user: JSON.stringify(user),         
+            event: JSON.stringify(eve),         
+            bookingdetails: JSON.stringify(bookdet),
+          }, {
+            headers: { "Content-Type": "application/json" }
+          });
           console.log(res);
+
         }catch(err){
           console.error(err)
         }

@@ -15,8 +15,8 @@ import (
 func Events(c *fiber.Ctx, db *gorm.DB) error {
 	var events []model.Event
 
-	// Query to select all events
-	if err := db.Where("deleted = ?", false).Find(&events).Error; err != nil {
+	// ✅ Load events along with the CreatedBy user
+	if err := db.Preload("CreatedBy").Where("deleted = ?", false).Find(&events).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
 			"message": "Failed to retrieve events",
@@ -26,7 +26,7 @@ func Events(c *fiber.Ctx, db *gorm.DB) error {
 	// Return the events as JSON
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
-		"message": events,
+		"message": events, // 🆗 Now includes the CreatedBy user data
 	})
 }
 

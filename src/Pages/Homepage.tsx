@@ -90,6 +90,9 @@ const Homepage = () => {
     // Call the async function
     signupUser();
 
+    console.log(events);
+    
+
 
     // Call the async function
   }, []); // Include 'cred' as a dependency to track changes
@@ -116,7 +119,11 @@ const Homepage = () => {
                     )}`}
                     className="details-link"
                   >
-                    <Button variant='outlined'>{"Book Now"}</Button>
+                    <Button variant='outlined' onClick={(eve:React.FormEvent)=>{
+                      localStorage.setItem('event',JSON.stringify(events[count-1]))
+                      console.log(localStorage.getItem('event'));
+                      
+                    }}>{"Book Now"}</Button>
                   </Link>
                 </div>
               </div>
