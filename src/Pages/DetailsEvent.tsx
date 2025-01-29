@@ -1,58 +1,82 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { Skeleton, Button } from '@mui/material';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import '../Static/DetailsEvent.css';
-
 import Header from '../Compunents/Header';
 
 const DetailsEvent = () => {
   const navigate = useNavigate();
-  const { data } = useParams();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const desc = queryParams.get('desc');
-  
-  const [loading, setLoading] = useState(true);
-
-  // Simulating loading of event data
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 3000); // Simulate loading for 3 seconds
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleBookingClick = () => {
-    navigate('/BookingDetails');
-  };
+  const { data } = useParams<{ data: string }>();
 
   // Parsing event data from the URL parameter
-  const { title = 'not available', date = 'not available', image = 'not available', location: eventLocation = 'not available', slots = '' } = 
-    data ? JSON.parse(decodeURIComponent(data)) : {};
-
-  // Fallback for missing data
-  const finalSlots = slots || 'Not Available';
+  const {
+    title = 'Not Available',
+    date = 'Not Available',
+    image = 'Not Available',
+    location: eventLocation = 'Not Available',
+    slots = 'Not Available',
+    desc = 'Description not available',
+  } = data ? JSON.parse(decodeURIComponent(data)) : {};
 
   // State for wishlist
   const [isWishlisted, setIsWishlisted] = useState(false);
 
+  // Check if event is already in the wishlist (on initial render)
+  useEffect(() => {
+    const storedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    const isEventInWishlist = storedWishlist.some((event: any) => event.title === title);
+    setIsWishlisted(isEventInWishlist);
+  }, [title]);
+
   const handleWishlistClick = () => {
-    setIsWishlisted((prev) => !prev);
+    const storedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    
+    // If event is not in the wishlist, add it
+    if (!isWishlisted) {
+      storedWishlist.push({
+        title,
+        date,
+        image,
+        eventLocation,
+        slots,
+        desc,
+      });
+    } else {
+      // Otherwise, remove it from the wishlist
+      const updatedWishlist = storedWishlist.filter((event: any) => event.title !== title);
+      localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+      setIsWishlisted(false);
+      return;
+    }
+
+    // Save updated wishlist to local storage
+    localStorage.setItem('wishlist', JSON.stringify(storedWishlist));
+    setIsWishlisted(true);
+  };
+
+  const handleBookingClick = () => {
+    // Passing the event data to the BookingDetails page
+    navigate('/BookingDetails', {
+      state: {
+        title,
+        date,
+        image,
+        eventLocation,
+        slots,
+        desc,
+      },
+    });
   };
 
   return (
     <div>
       <Header />
       <div className="event-details">
-        {/* Show skeleton if loading */}
-        {loading ? (
-          <Skeleton variant="rectangular" width="100%" height={300} sx={{ mb: 2 }} />
-        ) : (
-          <img
-            className="event-image"
-            src={image || 'https://via.placeholder.com/1920x1080'}
-            alt={title}
-          />
-        )}
+        {/* Full-Width Background Image */}
+        <img
+          className="event-image"
+          src={`http://localhost:8000${image}`}
+          alt={title}
+        />
 
         {/* Overlay for better readability */}
         <div className="event-overlay"></div>
@@ -69,50 +93,36 @@ const DetailsEvent = () => {
         {/* Event Content */}
         <div className="event-content">
           <div className="event-header">
-            {loading ? (
-              <>
-                <Skeleton width="60%" height={40} />
-                <Skeleton width="40%" />
-              </>
-            ) : (
-              <>
-                <h1>{title || 'Unknown Event'}</h1>
-                <p>{date || 'Date not available'}</p>
-              </>
-            )}
+            <h1>{title}</h1>
+            <p>{date}</p>
             <a
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(eventLocation)}`}
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                eventLocation
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="gmap-link"
             >
-              {loading ? (
-                <Skeleton width="40%" />
-              ) : (
-                'View on Google Maps'
-              )}
+              View on Google Maps
             </a>
           </div>
         </div>
       </div>
 
-      {/* Event Description */}
-      {loading ? (
-        <Skeleton width="80%" height={50} />
-      ) : (
-        <p>{desc || 'Data not available'}</p>
-      )}
+      {/* Description */}
+      <p>{desc}</p>
 
-      <button className="book-now-button" onClick={handleBookingClick}>
-        {loading ? <Skeleton width="50%" height={40} /> : 'Book Now'}
+      {/* Book Now Button */}
+      <button
+        className="book-now-button"
+        onClick={handleBookingClick}
+      >
+        Book Now
       </button>
 
+      {/* Slots Info */}
       <div className="button-slots">
-        {loading ? (
-          <Skeleton width="40%" height={30} />
-        ) : (
-          <h3>Available slots: {finalSlots}</h3>
-        )}
+        <h3>Available slots: {slots}</h3>
       </div>
     </div>
   );

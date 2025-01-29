@@ -99,7 +99,7 @@ const Homepage = () => {
     events.map((element)=>{
       setEventViews((prev)=>[...prev,(
         <div key={count++} className="event-card">
-                <img src={"http://127.0.0.1:3000/"+element.file_path} alt={element.name} />
+                <img src={"http://127.0.0.1:3000"+element.file_path} alt={element.name} />
                 <div className="event-card-content">
                   <h3>{element.name}</h3>
                   <p>{element.description}</p>
