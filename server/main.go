@@ -62,6 +62,12 @@ func main() {
 		return nil
 	})
 
+	app.Post("/create-order", Event.CreateOrder)
+
+	app.Post("/booking", func(c *fiber.Ctx) error {
+		return Event.Booking(c, db)
+	})
+
 	app.Post("/check", middleware.JWTMiddleware(), func(c *fiber.Ctx) error {
 		fmt.Println("Checking the validity of token...")
 		return c.Status(200).JSON(fiber.Map{
