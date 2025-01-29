@@ -36,6 +36,9 @@ func main() {
 	app.Post("/eventDeletion", middleware.JWTMiddleware(), func(c *fiber.Ctx) error {
 		return Event.EventCreation(c, db)
 	})
+	app.Post("/eventOrganizer", middleware.JWTMiddleware(), func(c *fiber.Ctx) error {
+		return Event.EventsOrganizer(c, db)
+	})
 	//ja
 	app.Post("/signup", func(c *fiber.Ctx) error {
 		return controller.SignupHandler(c, db)

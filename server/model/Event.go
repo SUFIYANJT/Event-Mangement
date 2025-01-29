@@ -14,6 +14,8 @@ type Event struct {
 	CreatedBy   User   `json:"created_by"`    // Association to User struct
 	Deleted     bool   `json:"deleted" gorm:"default:false"`
 	Location    string `json:"location"`
+	Image       string `json:"image"`
+	Slots       int    `json:"slots" gorm:"default:10"`
 }
 
 type EventDeletion struct {
