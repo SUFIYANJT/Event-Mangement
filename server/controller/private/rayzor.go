@@ -155,6 +155,7 @@ func Booking(c *fiber.Ctx, db *gorm.DB) error {
 		TransactionID:   razorpayReq.Response.PaymentID,
 		RazorpayOrderID: razorpayReq.Response.OrderID,
 		CreatedAt:       time.Now(),
+		Ticket:          bookingDetails.Increment,
 	}
 
 	// Save booking in DB

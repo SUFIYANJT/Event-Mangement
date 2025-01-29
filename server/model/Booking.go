@@ -11,4 +11,5 @@ type Booking struct {
 	TransactionID   string    `json:"transaction_id" gorm:"unique;not null"`
 	RazorpayOrderID string    `json:"razorpay_order_id" gorm:"unique;not null"` // Unique Transaction ID
 	CreatedAt       time.Time `json:"created_at"`                               // Timestamp for booking
+	Ticket          int       `json:"ticket"`
 }
