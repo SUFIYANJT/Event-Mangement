@@ -8,6 +8,7 @@ const DetailsEvent = () => {
   const { data } = useParams<{ data: string }>();
 
   // Parsing event data from the URL parameter
+  
   const {
     title = 'Not Available',
     date = 'Not Available',
@@ -16,6 +17,7 @@ const DetailsEvent = () => {
     slots = 'Not Available',
     desc = 'Description not available',
   } = data ? JSON.parse(decodeURIComponent(data)) : {};
+  console.log(data)
 
   // State for wishlist
   const [isWishlisted, setIsWishlisted] = useState(false);

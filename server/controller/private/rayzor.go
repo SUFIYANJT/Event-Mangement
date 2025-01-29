@@ -92,11 +92,11 @@ func Booking(c *fiber.Ctx, db *gorm.DB) error {
 	/*newBook:= book.Booking(
 		UserID       : dataUser.Id
 		User       :    user
-	EventID       :
-	Event         :
-	TransactionID   :
-	RazorpayOrderID :
-	CreatedAt:      time.Now()
+		EventID       :
+		Event         :
+		TransactionID   :
+		RazorpayOrderID :
+		CreatedAt:      time.Now()
 	)
 
 	if err := db.Create(&book).Error; err != nil {
