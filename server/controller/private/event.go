@@ -161,7 +161,36 @@ func EventCreation(c *fiber.Ctx, db *gorm.DB) error {
 
 }
 
-func eventDeletion(c *fiber.Ctx, db *gorm.DB) error {
+func EventDeletion(c *fiber.Ctx, db *gorm.DB) error {
+
+	type SignupCred struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+		Email    string `json:"email"`
+		Id       int    `json:"id"`
+	}
+
+	var signCred SignupCred
+	if err := c.BodyParser(&signCred); err != nil {
+		return c.Status(200).JSON(fiber.Map{
+			"success": false,
+			"message": "Invalid request body",
+		})
+	}
+
+	var user model.User
+	if err := db.Where("Id = ?", signCred.Id).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid username or password",
+			})
+		}
+		// Handle other possible errors
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Database error",
+		})
+	}
+
 	return c.Status(200).JSON(fiber.Map{
 		"success": true,
 		"message": "access granted to protected data",

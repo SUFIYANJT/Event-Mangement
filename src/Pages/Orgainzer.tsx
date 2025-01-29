@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddIcon from '@mui/icons-material/Add';
-import { Link, useNavigate } from 'react-router-dom';
+import { data, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -42,6 +42,26 @@ const Organizer: React.FC = () => {
   });
   var condition = true
 
+  const handleDelete = async (eve:React.FormEvent) => {
+    const user = localStorage.getItem('user')
+    const token = localStorage.getItem('token')
+    const data = JSON.parse(user!=null?user:"{}")
+    
+    try {
+      const response = await axios.post('http://127.0.0.1:3000/eventDelete', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`
+        },
+      });
+      console.log(response.data)
+    } catch (error) {
+      console.error('Error creating event:', error);
+      alert('Error creating event');
+    }
+    
+  }
+
   const fetchEvent = async () => {
     condition = false
     const formData = new FormData()
@@ -58,7 +78,7 @@ const Organizer: React.FC = () => {
       const response = await axios.post('http://127.0.0.1:3000/eventOrganizer', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: Bearer ${token}
+          Authorization: `Bearer ${token}`
         },
       });
       setSubmittedDetails(eventDetails);
@@ -102,7 +122,7 @@ const Organizer: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    console.log(events.length,condition);
+    console.log(events.length, condition);
     setEventViews([])
     events.map((element) => {
       setEventViews((prev) => [...prev, (<Box sx={{ margin: 3, padding: 3, border: '1px solid #ddd', borderRadius: 2 }}>
@@ -121,6 +141,9 @@ const Organizer: React.FC = () => {
             <strong>Uploaded Image:</strong> {element.image.name}
           </Typography>
         )}
+        <Button onClick={handleDelete}>
+          delete
+        </Button>
       </Box>)])
     })
   }, [events])
@@ -171,7 +194,7 @@ const Organizer: React.FC = () => {
       const response = await axios.post('http://127.0.0.1:3000/eventCreation', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: Bearer ${token}
+          Authorization: `Bearer ${token}`
         },
       });
       setSubmittedDetails(eventDetails);
