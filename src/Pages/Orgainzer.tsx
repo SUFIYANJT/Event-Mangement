@@ -20,6 +20,8 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import dayjs, { Dayjs } from "dayjs";
 
 interface EventDetails {
+  Ticket: string;
+  Loaction: string;
   name: string;
   description: string;
   slots: string;
@@ -35,9 +37,11 @@ const Organizer: React.FC = () => {
   const [eventDetails, setEventDetails] = useState<EventDetails>({
     name: '',
     description: '',
+    Loaction:'',
     slots: '',
     image: null,
     created_at: '',
+    Ticket:'',
     created_by: ''
   });
   var condition = true
@@ -92,8 +96,10 @@ const Organizer: React.FC = () => {
             description: element.description,
             slots: element.slots,
             image: element.image,
+            Loaction: element.Loaction,
             created_at: element.created_at,
-            created_by: element.created_by
+            created_by: element.created_by,
+            Ticket: element.Ticket
           }
           SetEvent((prev) => [...prev, newElement])
         })
@@ -207,7 +213,9 @@ const Organizer: React.FC = () => {
         slots: response.data.message.slots,
         image: response.data.message.image,
         created_at: response.data.message.created_at,
-        created_by: response.data.message.created_by
+        created_by: response.data.message.created_by,
+        Loaction:response.data.message.Location,
+        Ticket: response.data.message.Ticket,
       }
       SetEvent((prev) => [...prev, newElement])
     } catch (error) {
@@ -284,6 +292,20 @@ const Organizer: React.FC = () => {
             label="Available Slots"
             name="slots"
             value={eventDetails.slots}
+            onChange={handleInputChange}
+            fullWidth
+          />
+          <TextField
+        label="Location"
+        name='Loaction'
+        value={eventDetails.Loaction}
+        onChange={handleInputChange}
+        fullWidth
+          />
+                 <TextField
+            label=" Ticket price"
+            name="Ticket price"
+            value={eventDetails.Ticket}
             onChange={handleInputChange}
             fullWidth
           />
