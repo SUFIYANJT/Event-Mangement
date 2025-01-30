@@ -62,6 +62,7 @@ type User struct {
 }
 
 type Event struct {
+	Id          int       `json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Slots       int       `json:"slots"`
@@ -136,7 +137,7 @@ func Booking(c *fiber.Ctx, db *gorm.DB) error {
 
 	// 🔹 FIND EVENT IN DATABASE BEFORE INSERTING
 	var existingEvent model.Event
-	result := db.Where("name = ? AND created_by_id = ?", event.Name, event.CreatedBy.Id).First(&existingEvent)
+	result := db.Where("id= ?", event.Id).First(&existingEvent)
 
 	if result.Error != nil {
 		// If the event doesn't exist, return an error
@@ -144,6 +145,12 @@ func Booking(c *fiber.Ctx, db *gorm.DB) error {
 			"success": false,
 			"message": "Event not found. Please create the event first.",
 		})
+	}
+	var orderID string
+	if razorpayReq.Response.OrderID != "" {
+		orderID = razorpayReq.Response.OrderID
+	} else {
+		orderID = razorpayReq.Response.PaymentID
 	}
 
 	// Insert into Booking Table
@@ -153,7 +160,7 @@ func Booking(c *fiber.Ctx, db *gorm.DB) error {
 		EventID:         existingEvent.Id, // ✅ Use existing event ID
 		Event:           existingEvent,
 		TransactionID:   razorpayReq.Response.PaymentID,
-		RazorpayOrderID: razorpayReq.Response.OrderID,
+		RazorpayOrderID: orderID,
 		CreatedAt:       time.Now(),
 		Ticket:          bookingDetails.Increment,
 	}
@@ -165,7 +172,17 @@ func Booking(c *fiber.Ctx, db *gorm.DB) error {
 			"message": "Failed to save booking: " + err.Error(),
 		})
 	}
+	result2 := db.Model(&event).
+		Where("id = ?", event.Id). // Ensure slots don't go negative
+		UpdateColumn("slots", gorm.Expr("slots - ?", bookingDetails.Increment))
 
+	if result2.Error != nil {
+		// If the event doesn't exist, return an error
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"message": "Event not found. Please create the event first.",
+		})
+	}
 	return c.Status(200).JSON(fiber.Map{
 		"message": "Booking successful",
 		"user":    dataUser,

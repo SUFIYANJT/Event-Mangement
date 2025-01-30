@@ -7,18 +7,19 @@ import { Button } from '@mui/material';
 import axios from 'axios';
 
 interface Events {
+  id: number,
   name: string,
   description: string,
   created_at: Date,
   created_by: string,
   file_path: string,
   slots: number,
-  eventdate:string
+  eventdate: string
 }
 
 const Homepage = () => {
   const [events, SetEvents] = useState<Events[]>([])
-  const [eventView,setEventViews] = useState<React.ReactNode[]>([])
+  const [eventView, setEventViews] = useState<React.ReactNode[]>([])
 
   useEffect(() => {
     // Define an async function inside the effect
@@ -57,7 +58,7 @@ const Homepage = () => {
         );
 
         console.log("Response:", response.data);
-        
+
 
         // Handle the server response
         if (response.data.success) {
@@ -66,18 +67,19 @@ const Homepage = () => {
           if (response.data.message instanceof Array) {
             response.data.message.map((element: any) => {
               const newElement: Events = {
+                id: element.id,
                 name: element.name,
                 description: element.description,
                 slots: element.slots,
                 file_path: element.image,
                 created_at: element.created_at,
                 created_by: element.created_by,
-                eventdate:element.event_date
+                eventdate: element.event_date
               }
-              SetEvents((prev)=>[...prev,newElement])
+              SetEvents((prev) => [...prev, newElement])
             })
           }
-      
+
         } else {
           alert(response.data.message); // Show error message if any
         }
@@ -91,7 +93,7 @@ const Homepage = () => {
     signupUser();
 
     console.log(events);
-    
+
 
 
     // Call the async function
@@ -99,34 +101,34 @@ const Homepage = () => {
 
   useEffect(() => {
     var count = 0;
-    events.map((element)=>{
-      setEventViews((prev)=>[...prev,(
+    events.map((element) => {
+      setEventViews((prev) => [...prev, (
         <div key={count++} className="event-card">
-                <img src={"http://127.0.0.1:3000"+element.file_path} alt={element.name} />
-                <div className="event-card-content">
-                  <h3>{element.name}</h3>
-                  <p>{element.description}</p>
-                  <p className="location">{element.eventdate}</p>
-                  <Link
-                    to={`/event-details/${encodeURIComponent(
-                      JSON.stringify({
-                        title: element.name,
-                        desc: element.description,
-                        date: element.eventdate,
-                        image: element.file_path,
-                        slots: element.slots
-                      })
-                    )}`}
-                    className="details-link"
-                  >
-                    <Button variant='outlined' onClick={(eve:React.FormEvent)=>{
-                      localStorage.setItem('event',JSON.stringify(events[count-1]))
-                      console.log(localStorage.getItem('event'));
-                      
-                    }}>{"Book Now"}</Button>
-                  </Link>
-                </div>
-              </div>
+          <img src={"http://127.0.0.1:3000" + element.file_path} alt={element.name} />
+          <div className="event-card-content">
+            <h3>{element.name}</h3>
+            <p>{element.description}</p>
+            <p className="location">{element.eventdate}</p>
+            <Link
+              to={`/event-details/${encodeURIComponent(
+                JSON.stringify({
+                  title: element.name,
+                  desc: element.description,
+                  date: element.eventdate,
+                  image: element.file_path,
+                  slots: element.slots
+                })
+              )}`}
+              className="details-link"
+            >
+              <Button variant='outlined' onClick={(eve: React.FormEvent) => {
+                localStorage.setItem('event', JSON.stringify(events[count - 1]))
+                console.log(localStorage.getItem('event'));
+
+              }}>{"Book Now"}</Button>
+            </Link>
+          </div>
+        </div>
       )])
     })
   }, [events])
