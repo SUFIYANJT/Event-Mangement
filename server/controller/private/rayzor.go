@@ -183,6 +183,8 @@ func Booking(c *fiber.Ctx, db *gorm.DB) error {
 			"message": "Event not found. Please create the event first.",
 		})
 	}
+	BroadcastMessage(db)
+
 	return c.Status(200).JSON(fiber.Map{
 		"message": "Booking successful",
 		"user":    dataUser,

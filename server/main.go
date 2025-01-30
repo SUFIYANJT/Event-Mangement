@@ -2,13 +2,16 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"my-fiber-app/config" // Assuming this is where your DB setup is
 	"my-fiber-app/controller"
 	Event "my-fiber-app/controller/private" // Assuming this is where your controller is
 	"my-fiber-app/middleware"
+	web "my-fiber-app/websocket"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/websocket/v2"
 )
 
 func main() {
@@ -61,6 +64,22 @@ func main() {
 
 		return nil
 	})
+
+	app.Get("/ws", websocket.New(func(c *websocket.Conn) {
+		web.Clients[c] = true
+		log.Println("New client connected")
+		Event.BroadcastMessage(db)
+
+		for {
+			_, msg, err := c.ReadMessage()
+			if err != nil {
+				log.Println("Client disconnected")
+				delete(web.Clients, c)
+				break
+			}
+			fmt.Println("Received:", string(msg))
+		}
+	}))
 
 	app.Post("/create-order", Event.CreateOrder)
 

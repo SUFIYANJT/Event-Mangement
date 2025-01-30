@@ -20,79 +20,104 @@ interface Events {
 const Homepage = () => {
   const [events, SetEvents] = useState<Events[]>([])
   const [eventView, setEventViews] = useState<React.ReactNode[]>([])
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [messages, setMessages] = useState<string>("");
+  const signupUser = async () => {
+    // Retrieve user from localStorage and handle cases where it may be null
+    const userStr = localStorage.getItem('user');
+    if (!userStr) {
+      alert('User data is missing');
+      return;
+    }
+
+    const user = JSON.parse(userStr);
+    console.log('User:', user);
+
+    // Retrieve token from localStorage
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Token is missing');
+      return;
+    }
+    console.log("token is :" + token)
+
+    try {
+      console.log("Sending user data to server...");
+
+      // Send the request with proper headers and body
+      const response = await axios.post(
+        "http://127.0.0.1:3000/event", // Your API endpoint
+        user, // The user object to send
+        {
+          headers: {
+            "Content-Type": "application/json", // Specify the content type
+            Authorization: `Bearer ${token}`,   // Send the token in the Authorization header
+          },
+        }
+      );
+
+      console.log("Response:", response.data);
+
+
+      // Handle the server response
+      if (response.data.success) {
+        SetEvents([])
+        console.log("Event created successfully, navigate to home page");
+        if (response.data.message instanceof Array) {
+          response.data.message.map((element: any) => {
+            const newElement: Events = {
+              id: element.id,
+              name: element.name,
+              description: element.description,
+              slots: element.slots,
+              file_path: element.image,
+              created_at: element.created_at,
+              created_by: element.created_by,
+              eventdate: element.event_date
+            }
+            SetEvents((prev) => [...prev, newElement])
+          })
+        }
+
+      } else {
+        alert(response.data.message); // Show error message if any
+      }
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      alert("Failed to submit data.");
+    }
+  };
 
   useEffect(() => {
-    // Define an async function inside the effect
-    const signupUser = async () => {
-      // Retrieve user from localStorage and handle cases where it may be null
-      const userStr = localStorage.getItem('user');
-      if (!userStr) {
-        alert('User data is missing');
-        return;
-      }
-
-      const user = JSON.parse(userStr);
-      console.log('User:', user);
-
-      // Retrieve token from localStorage
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Token is missing');
-        return;
-      }
-      console.log("token is :" + token)
-
-      try {
-        console.log("Sending user data to server...");
-
-        // Send the request with proper headers and body
-        const response = await axios.post(
-          "http://127.0.0.1:3000/event", // Your API endpoint
-          user, // The user object to send
-          {
-            headers: {
-              "Content-Type": "application/json", // Specify the content type
-              Authorization: `Bearer ${token}`,   // Send the token in the Authorization header
-            },
-          }
-        );
-
-        console.log("Response:", response.data);
-
-
-        // Handle the server response
-        if (response.data.success) {
-          SetEvents([])
-          console.log("Event created successfully, navigate to home page");
-          if (response.data.message instanceof Array) {
-            response.data.message.map((element: any) => {
-              const newElement: Events = {
-                id: element.id,
-                name: element.name,
-                description: element.description,
-                slots: element.slots,
-                file_path: element.image,
-                created_at: element.created_at,
-                created_by: element.created_by,
-                eventdate: element.event_date
-              }
-              SetEvents((prev) => [...prev, newElement])
-            })
-          }
-
-        } else {
-          alert(response.data.message); // Show error message if any
-        }
-      } catch (error) {
-        console.error("Error submitting data:", error);
-        alert("Failed to submit data.");
-      }
-    };
-
-    // Call the async function
     signupUser();
 
     console.log(events);
+    const ws = new WebSocket("ws://127.0.0.1:3000/ws");
+
+    ws.onopen = () => console.log("Connected to WebSocket server");
+    ws.onmessage = (event) => {
+      setMessages(event.data)
+      const jsonString = event.data
+      const parsedEvents = JSON.parse(jsonString);
+      console.log(event.data,parsedEvents);
+      var tmpArray : Events[] = []
+      SetEvents([])
+      console.log("cleared the events array...");
+      
+      parsedEvents.map((element: Events)=>{
+        const tmp = events.filter((ele:Events)=>ele.id == element.id)[0]
+        if (tmp != null){
+          tmp.slots = parsedEvents.slots
+          tmpArray.push(tmp)
+        }
+      })
+      console.log("Reinitialized the array...");
+      SetEvents(tmpArray)
+    };
+    ws.onclose = () => console.log("WebSocket connection closed");
+
+    setSocket(ws);
+    return () => ws.close();
 
 
 
@@ -109,6 +134,7 @@ const Homepage = () => {
             <h3>{element.name}</h3>
             <p>{element.description}</p>
             <p className="location">{element.eventdate}</p>
+            <p className="slots">{element.slots} ticket more</p>
             <Link
               to={`/event-details/${encodeURIComponent(
                 JSON.stringify({
