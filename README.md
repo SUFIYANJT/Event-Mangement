@@ -3,53 +3,80 @@
 Event-Mangement and control
 =======
 # React + TypeScript + Vite
+Event Management System
+Overview
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The Event Management System is a web application that allows users to create, manage, and view events. This project is built using React for the frontend and Go for the backend with MySQL as the database.
+Features
 
-Currently, two official plugins are available:
+    Home Page: View a list of upcoming events.
+    Event Detail Pages: Access detailed information about each event.
+    Dashboard: A protected area for authenticated users to manage events, including creating, editing, and deleting events.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Technologies Used
 
-## Expanding the ESLint configuration
+    Frontend:
+        React: Front-end library for building user interfaces.
+        React Router v6.4: For handling navigation and routing.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+    Backend:
+        Go: Backend programming language.
+        MySQL: Database for storing event data.
 
-- Configure the top-level `parserOptions` property like this:
+    Others:
+        JSON Server: Simulates a mock backend for development purposes (only in the frontend setup).
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+Installation and Setup
+Prerequisites
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+    Node.js (v14 or higher)
+    npm or yarn package manager
+    Go (v1.18 or higher)
+    MySQL (v8 or higher)
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Clone the Repository
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
->>>>>>> 44cef5b (userpage)
+git clonhttps://github.com/SUFIYANJT/Event-Mangement/
+cd event-management-system
+
+Install Frontend Dependencies
+
+npm install
+
+Set Up the Backend (Go + MySQL)
+
+    Install Go and MySQL if not already installed.
+
+    Set up MySQL Database:
+        Create a database for events.
+        Import the schema from the backend Go code (or create a table for events).
+
+    Start the Go Backend:
+        Navigate to the backend directory and run the Go application to start the server (ensure MySQL is running).
+
+    go run main.go
+
+        The backend will be running on a specific port (e.g., http://localhost:8080).
+
+Set Up JSON Server (Optional for Mock Data)
+
+If you want to use a mock backend (for frontend development), you can set up JSON Server:
+
+npm install -g json-server
+npx json-server --watch data/event.json --port 3003
+
+Running the Application
+
+    Start the React Development Server:
+
+    In a separate terminal window, run the following command:
+
+npm run dev
+
+Navigate to: http://localhost:5173 to see the frontend in action.> 44cef5b (userpage)
+Test users
+username sufiyan1023
+password sufiyan
+in orgainzer
+username: johhan1023
+password:johhan123
